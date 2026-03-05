@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    @apply h-full w-full m-0 p-0;
+  }
+
+  body {
+    @apply bg-surface-0 text-gray-200;
+  }
+
+  /* Dark scrollbar styling */
+  .panel-scroll::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  .panel-scroll::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .panel-scroll::-webkit-scrollbar-thumb {
+    @apply bg-border-default rounded-full hover:bg-border-strong;
+  }
+
+  /* Select dropdown dark styling */
+  select option {
+    @apply bg-surface-2 text-gray-200;
+  }
+
+  /* macOS window dragging — toolbar acts as title bar */
+  .app-drag-region {
+    -webkit-app-region: drag;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  .app-drag-region button,
+  .app-drag-region select,
+  .app-drag-region input,
+  .app-drag-region .no-drag {
+    -webkit-app-region: no-drag;
+  }
+}

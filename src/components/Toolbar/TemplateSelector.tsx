@@ -1,0 +1,57 @@
+import { useEffect } from 'react'
+import { useTemplateStore } from '../../store/useTemplateStore'
+import { useAppViewStore } from '../../store/useAppViewStore'
+
+export default function TemplateSelector() {
+  const { templateList, isLoadingList, selectedTemplate, fetchTemplateList, selectTemplate } =
+    useTemplateStore()
+  const openTemplateEditor = useAppViewStore((s) => s.openTemplateEditor)
+
+  useEffect(() => {
+    fetchTemplateList()
+  }, [fetchTemplateList])
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const file = e.target.value
+    if (file) {
+      selectTemplate(file)
+    }
+  }
+
+  const selectedFile = templateList.find((t) => t.id === selectedTemplate?.id)?.file ?? ''
+
+  const handleEditTemplates = () => {
+    openTemplateEditor(selectedFile || null)
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 no-drag">
+      <select
+        value={selectedFile}
+        onChange={handleChange}
+        disabled={isLoadingList}
+        className="px-3 py-1.5 bg-surface-3 rounded-md text-sm text-gray-300 border border-border-default hover:border-border-strong focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent min-w-[280px] cursor-pointer disabled:opacity-50"
+      >
+        <option value="">
+          {isLoadingList ? 'Завантаження...' : 'Оберіть шаблон...'}
+        </option>
+        {templateList.map((t) => (
+          <option key={t.id} value={t.file}>
+            {t.name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        onClick={handleEditTemplates}
+        className="p-1.5 text-gray-400 hover:text-gray-200 transition-colors rounded-md hover:bg-surface-3"
+        title="Редагувати шаблони"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+      </button>
+    </div>
+  )
+}
