@@ -1,6 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTemplateStore } from '../../store/useTemplateStore'
 import { useAppViewStore } from '../../store/useAppViewStore'
+
+const MODALITY_LABELS: Record<string, string> = {
+  CT: 'КТ',
+  MRI: 'МРТ',
+}
+
+const MODALITY_ORDER = ['CT', 'MRI']
 
 export default function TemplateSelector() {
   const { templateList, isLoadingList, selectedTemplate, fetchTemplateList, selectTemplate } =
@@ -24,6 +31,29 @@ export default function TemplateSelector() {
     openTemplateEditor(selectedFile || null)
   }
 
+  const groupedTemplates = useMemo(() => {
+    const groups: Record<string, typeof templateList> = {}
+    for (const t of templateList) {
+      const mod = t.modality || 'Інше'
+      if (!groups[mod]) groups[mod] = []
+      groups[mod].push(t)
+    }
+    // Sort groups by MODALITY_ORDER, then alphabetically
+    const sortedKeys = Object.keys(groups).sort((a, b) => {
+      const ia = MODALITY_ORDER.indexOf(a)
+      const ib = MODALITY_ORDER.indexOf(b)
+      if (ia !== -1 && ib !== -1) return ia - ib
+      if (ia !== -1) return -1
+      if (ib !== -1) return 1
+      return a.localeCompare(b)
+    })
+    return sortedKeys.map((mod) => ({
+      modality: mod,
+      label: MODALITY_LABELS[mod] || mod,
+      templates: groups[mod].sort((a, b) => a.name.localeCompare(b.name, 'uk')),
+    }))
+  }, [templateList])
+
   return (
     <div className="flex items-center gap-1.5 no-drag">
       <select
@@ -35,10 +65,14 @@ export default function TemplateSelector() {
         <option value="">
           {isLoadingList ? 'Завантаження...' : 'Оберіть шаблон...'}
         </option>
-        {templateList.map((t) => (
-          <option key={t.id} value={t.file}>
-            {t.name}
-          </option>
+        {groupedTemplates.map((group) => (
+          <optgroup key={group.modality} label={group.label}>
+            {group.templates.map((t) => (
+              <option key={t.id} value={t.file}>
+                {t.name}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
 
