@@ -111,12 +111,6 @@ npm run build
 - [FEATURES.md](./FEATURES.md) — functional requirements
 - [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) — implementation plan
 
-## Inspiration
-
-- [deepcOS AIR](https://www.deepc.ai/products/applications/air)
-- [RADPAIR](https://radpair.com/)
-- [VoxRad](https://github.com/drankush/VoxRad)
-
 ## License
 
 Private — for personal use only.
